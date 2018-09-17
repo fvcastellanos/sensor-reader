@@ -29,10 +29,15 @@ def water_pump():
     body = request.json
     action = body['action']
 
-    readerService.operateWaterPump(id, action)
+    result = readerService.operateWaterPump(id, action)
 
-    return HTTPResponse(status=200)
+    if (result['isSuccess']):
+        
+        response = buildSuccessActionView(result)
+        return HTTPResponse(status=200, body=response)
 
+    error = buildErrorView(result)
+    return HTTPResponse(status=422, body=error)
 
 def createCorrelationId():
     return str(uuid.uuid1())
@@ -48,4 +53,9 @@ def buildSuccessView(response):
         "correlationId": response["correlationId"],
         "humidity": response["humidity"],
         "temperature": response["temperature"]
+    }
+
+def buildSuccessActionView(response):
+    return {
+        "correlationId": response["correlationId"]
     }
