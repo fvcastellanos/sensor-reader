@@ -1,10 +1,10 @@
-from bottle import post, get, route, request, HTTPResponse
+from bottle import post, get, route, request, HTTPResponse, request
 import uuid
 import logging
 
-import reader_service as readerService
+import sensor_service as readerService
 
-@get('/read-sensor')
+@get('/soil-sensor')
 def read_sensonr():
 
     id = createCorrelationId()
@@ -18,6 +18,21 @@ def read_sensonr():
     
     error = buildErrorView(result)
     return HTTPResponse(status=422, body=error)
+
+@post('/pump')
+def water_pump():
+
+    id = createCorrelationId()
+
+    logging.info("received a water pump request using id: %s", id)
+
+    body = request.json
+    action = body['action']
+
+    readerService.operateWaterPump(id, action)
+
+    return HTTPResponse(status=200)
+
 
 def createCorrelationId():
     return str(uuid.uuid1())

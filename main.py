@@ -1,7 +1,7 @@
 from bottle import run
 import logging
 
-import reader_controller
+import sensor_controller
 
 FORMAT = '%(asctime)s %(message)s'
 DATE_FORMAT = '%Y/%m/%d %I:%M:%S %p'

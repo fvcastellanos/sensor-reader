@@ -9,12 +9,26 @@ def readHumiditySensor(correlationId):
     try:
         value = performSensorReading(correlationId)
 
-        return buildSuccessResponse(correlationId, value["humidity"], value["temperature"])
+        return buildReadSuccessResponse(correlationId, value["humidity"], value["temperature"])
     
     except ValueError as ex:
 
-        logging.error("can't read from sensor: %s", ex)
+        logging.error("id: %s -> can't read from sensor: %s", correlationId, ex)
         return buildErrorResponse(correlationId, "can't read from sensor")
+
+def operateWaterPump(correlationId, action):
+
+    logging.info("id: %s -> performing operation: %s water pump", correlationId, action)
+
+    try:
+        performActionWaterPump(correlationId, action)
+
+        return buildSuccessAction(correlationId)
+
+    except ValueError as ex:
+
+        logging.error("id: %s -> can't perform operation: %s water pump -> %s", correlationId, action, ex)
+        return buildErrorResponse(correlationId, "can't perform action: " + action + " water pump")
 
 # temporary logic for sensor reading
 def performSensorReading(correlationId):
@@ -34,6 +48,13 @@ def performSensorReading(correlationId):
         "temperature": temperature[0]
     }
 
+# temporary function while actuators work
+def performActionWaterPump(correlationId, action):
+
+    logging.info("id: %s -> perform action: %s water pump", correlationId, action)
+
+
+
 def buildErrorResponse(correlationId, message):
 
     return {
@@ -43,11 +64,18 @@ def buildErrorResponse(correlationId, message):
         "message": message
     }
 
-def buildSuccessResponse(correlationId, humidityValue, temperatureValue):
+def buildReadSuccessResponse(correlationId, humidityValue, temperatureValue):
     return {
         "isSuccess": True,
         "time": datetime.datetime.now(),
         "correlationId": correlationId,
         "humidity": humidityValue,
         "temperature": temperatureValue
+    }
+
+def buildSuccessAction(correlationId):
+    return {
+        "isSuccess": True,
+        "time": datetime.datetime.now(),
+        "correlationId": correlationId,
     }
