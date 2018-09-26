@@ -2,6 +2,8 @@ import logging
 import datetime
 import random
 
+import pi_client
+
 def readHumiditySensor(correlationId):
 
     logging.info("id: %s -> performing a reading from humidity sensor", correlationId)
@@ -33,20 +35,15 @@ def operateWaterPump(correlationId, action):
 # temporary logic for sensor reading
 def performSensorReading(correlationId):
 
-    temperature = random.sample([15, 20, 25, 10, -5, 40], 1)
-    humidity = random.sample([15, 20, 25, 10, -5, 40], 1)
+    try:
+        moisturePercentage = readMoisturePercentageLevel()
+        logging.info("id: %s -> humidity: %s", correlationId, moisturePercentage)
+        return moisturePercentage    
 
-    logging.info("id: %s -> temperature: %s - humidity: %s", correlationId, temperature, humidity)
-
-    if ((temperature[0] == -5) or (humidity[0] == -5)):
-
-        logging.error("id: %s -> can't read from sensor", correlationId)
+    except ValueError as ex:
+        logging.error("id: %s -> can't read from sensor: %s", correlationId, ex)
         raise ValueError("can't read from sensor")
 
-    return {
-        "humidity": humidity[0],
-        "temperature": temperature[0]
-    }
 
 # temporary function while actuators work
 def performActionWaterPump(correlationId, action):
@@ -64,13 +61,12 @@ def buildErrorResponse(correlationId, message):
         "message": message
     }
 
-def buildReadSuccessResponse(correlationId, humidityValue, temperatureValue):
+def buildReadSuccessResponse(correlationId, humidityValue):
     return {
         "isSuccess": True,
         "time": datetime.datetime.now(),
         "correlationId": correlationId,
-        "humidity": humidityValue,
-        "temperature": temperatureValue
+        "humidity": humidityValue
     }
 
 def buildSuccessAction(correlationId):
