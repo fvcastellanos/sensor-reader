@@ -51,8 +51,7 @@ def buildErrorView(response):
 def buildSuccessView(response):
     return {
         "correlationId": response["correlationId"],
-        "humidity": response["humidity"],
-        "temperature": response["temperature"]
+        "humidity": response["humidity"]
     }
 
 def buildSuccessActionView(response):
