@@ -2,7 +2,7 @@ import logging
 import datetime
 import random
 
-import pi_client
+import pi_client as piClient
 
 def readHumiditySensor(correlationId):
 
@@ -11,7 +11,7 @@ def readHumiditySensor(correlationId):
     try:
         value = performSensorReading(correlationId)
 
-        return buildReadSuccessResponse(correlationId, value["humidity"], value["temperature"])
+        return buildReadSuccessResponse(correlationId, value)
     
     except ValueError as ex:
 
@@ -36,7 +36,7 @@ def operateWaterPump(correlationId, action):
 def performSensorReading(correlationId):
 
     try:
-        moisturePercentage = readMoisturePercentageLevel()
+        moisturePercentage = piClient.readMoisturePercentageLevel()
         logging.info("id: %s -> humidity: %s", correlationId, moisturePercentage)
         return moisturePercentage    
 
