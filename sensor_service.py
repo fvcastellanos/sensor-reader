@@ -3,6 +3,8 @@ import datetime
 import random
 
 import pi_client as piClient
+import temp_reader as tempReader
+
 
 def readHumiditySensor(correlationId):
 
