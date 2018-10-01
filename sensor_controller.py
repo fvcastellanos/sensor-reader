@@ -28,7 +28,7 @@ def read_temperature_sensor():
     result = readerService.readTemperatureSensor(id)
 
     if (result['isSuccess']):
-        response = buildSuccessHumidityView(result)
+        response = buildSuccessTemperatureView(result)
         return HTTPResponse(status=200, body=response)
 
     error = buildErrorView(result)
