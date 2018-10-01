@@ -5,7 +5,7 @@ import logging
 import sensor_service as readerService
 
 @get('/soil-sensor')
-def read_sensonr():
+def read_humidity_sensor():
 
     id = createCorrelationId()
 
@@ -13,9 +13,24 @@ def read_sensonr():
     result = readerService.readHumiditySensor(id)
 
     if (result["isSuccess"]):
-        response = buildSuccessView(result)
+        response = buildSuccessHumidityView(result)
         return HTTPResponse(status=200, body=response)
     
+    error = buildErrorView(result)
+    return HTTPResponse(status=422, body=error)
+
+@get('/temperature-sensor')
+def read_temperature_sensor():
+
+    id = createCorrelationId()
+
+    logging.info("received read temperature request using id: %s", id)
+    result = readerService.readTemperatureSensor(id)
+
+    if (result['isSuccess']):
+        response = buildSuccessHumidityView(result)
+        return HTTPResponse(status=200, body=response)
+
     error = buildErrorView(result)
     return HTTPResponse(status=422, body=error)
 
@@ -48,10 +63,16 @@ def buildErrorView(response):
         "message": response["message"]
     }
 
-def buildSuccessView(response):
+def buildSuccessHumidityView(response):
     return {
         "correlationId": response["correlationId"],
         "humidity": response["humidity"]
+    }
+
+def buildSuccessTemperatureView(response):
+    return {
+        "correlationId": response["correlationId"],
+        "temperature": response["temperature"]
     }
 
 def buildSuccessActionView(response):

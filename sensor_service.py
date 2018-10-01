@@ -11,14 +11,28 @@ def readHumiditySensor(correlationId):
     logging.info("id: %s -> performing a reading from humidity sensor", correlationId)
 
     try:
-        value = performSensorReading(correlationId)
+        value = performMoistureSensorReading(correlationId)
 
-        return buildReadSuccessResponse(correlationId, value)
+        return buildReadHumiditySuccessResponse(correlationId, value)
     
     except ValueError as ex:
 
-        logging.error("id: %s -> can't read from sensor: %s", correlationId, ex)
-        return buildErrorResponse(correlationId, "can't read from sensor")
+        logging.error("id: %s -> can't read from humidity sensor: %s", correlationId, ex)
+        return buildErrorResponse(correlationId, "can't read from humidity sensor")
+
+def readTemperatureSensor(correlationId):
+
+    logging.info("id: %s -> performing a reading from temperature sensor", correlationId)
+
+    try: 
+        value = performTemperatureSensorReading(correlationId)
+
+        return buildReadTemperatureSuccessResponse(correlationId, value)
+
+    except ValueError as ex:
+
+        logging.error("id: %s -> can't read from temperature sensor: %s", correlationId, ex)
+        return buildErrorResponse(correlationId, "can't read from temperature sensor")
 
 def operateWaterPump(correlationId, action):
 
@@ -35,7 +49,7 @@ def operateWaterPump(correlationId, action):
         return buildErrorResponse(correlationId, "can't perform action: " + action + " water pump")
 
 # temporary logic for sensor reading
-def performSensorReading(correlationId):
+def performMoistureSensorReading(correlationId):
 
     try:
         moisturePercentage = piClient.readMoisturePercentageLevel()
@@ -43,9 +57,20 @@ def performSensorReading(correlationId):
         return moisturePercentage    
 
     except ValueError as ex:
-        logging.error("id: %s -> can't read from sensor: %s", correlationId, ex)
-        raise ValueError("can't read from sensor")
+        logging.error("id: %s -> can't read from humidity sensor: %s", correlationId, ex)
+        raise ValueError("can't read from humidity sensor")
 
+
+def performTemperatureSensorReading(correlationId):
+
+    try:
+        temperature = tempReader.read_temp()
+        logging.info("id: %s -> temperature: %s", correlationId, temperature)
+        return temperature
+
+    except ValueError as ex:
+        logging.error("id: %s -> can't read from temperature sensor: %s", correlationId, ex)
+        raise ValueError("can't read from temperature sensor")
 
 # temporary function while actuators work
 def performActionWaterPump(correlationId, action):
@@ -63,12 +88,20 @@ def buildErrorResponse(correlationId, message):
         "message": message
     }
 
-def buildReadSuccessResponse(correlationId, humidityValue):
+def buildReadHumiditySuccessResponse(correlationId, humidityValue):
     return {
         "isSuccess": True,
         "time": datetime.datetime.now(),
         "correlationId": correlationId,
         "humidity": humidityValue
+    }
+
+def buildReadTemperatureSuccessResponse(correlationId, humidityValue):
+    return {
+        "isSuccess": True,
+        "time": datetime.datetime.now(),
+        "correlationId": correlationId,
+        "temperature": humidityValue
     }
 
 def buildSuccessAction(correlationId):
