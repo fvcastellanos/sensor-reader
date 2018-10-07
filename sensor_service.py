@@ -4,6 +4,7 @@ import random
 
 import pi_client as piClient
 import temp_reader as tempReader
+import relay_actuator as relayActuator
 
 
 def readHumiditySensor(correlationId):
@@ -76,6 +77,10 @@ def performTemperatureSensorReading(correlationId):
 def performActionWaterPump(correlationId, action):
 
     logging.info("id: %s -> perform action: %s water pump", correlationId, action)
+    if action == 1 :
+        relayActuator.activateRelay()
+    else :
+        relayActuator.deactivateRelay()
 
 
 
