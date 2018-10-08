@@ -1,4 +1,4 @@
-from bottle import post, get, route, request, HTTPResponse, request
+from bottle import post, get, route, request, HTTPResponse
 import uuid
 import logging
 
@@ -34,15 +34,16 @@ def read_temperature_sensor():
     error = buildErrorView(result)
     return HTTPResponse(status=422, body=error)
 
-@post('/pump')
+@post('/water-pump')
 def water_pump():
 
     id = createCorrelationId()
 
     logging.info("received a water pump request using id: %s", id)
 
-    body = request.json
-    action = body['action']
+    # body = request.json
+    # action = body['action']
+    action = request.json.get('action')
 
     result = readerService.operateWaterPump(id, action)
 

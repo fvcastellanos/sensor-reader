@@ -49,7 +49,6 @@ def operateWaterPump(correlationId, action):
         logging.error("id: %s -> can't perform operation: %s water pump -> %s", correlationId, action, ex)
         return buildErrorResponse(correlationId, "can't perform action: " + action + " water pump")
 
-# temporary logic for sensor reading
 def performMoistureSensorReading(correlationId):
 
     try:
@@ -73,7 +72,6 @@ def performTemperatureSensorReading(correlationId):
         logging.error("id: %s -> can't read from temperature sensor: %s", correlationId, ex)
         raise ValueError("can't read from temperature sensor")
 
-# temporary function while actuators work
 def performActionWaterPump(correlationId, action):
 
     logging.info("id: %s -> perform action: %s water pump", correlationId, action)
